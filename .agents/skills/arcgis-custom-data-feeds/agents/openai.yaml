@@ -1,3 +1,0 @@
-interface:
-  display_name: "ArcGIS Custom Data Feeds"
-  short_description: "Build CDF providers that expose external systems as ArcGIS Feature Services"

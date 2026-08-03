@@ -1,15 +1,27 @@
-# Python
-.venv/
-__pycache__/
-*.py[cod]
-*.egg-info/
-.pytest_cache/
-.mypy_cache/
-.ipynb_checkpoints/
+# Dependencies
+node_modules/
 
-# Environment
+# Build output
+dist/
+frontend/dist/
+api/dist/
+
+# Env & secrets
 .env
+.env.*
+!.env.example
+api/local.settings.json
 
-# OS
-Thumbs.db
+# Azure Functions
+bin/
+obj/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
 .DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
