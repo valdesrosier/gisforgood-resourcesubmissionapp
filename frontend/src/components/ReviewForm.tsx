@@ -1,4 +1,3 @@
-import React from 'react';
 import type { ResourceDraft } from '@shared/draft';
 import {
   RESOURCE_TYPE, SERVICE_TYPE, DATA_TYPE, YES_NO, MISSION_SECTOR_BROAD,
@@ -29,70 +28,84 @@ export function ReviewForm(props: {
   return (
     <div>
       <h2>Review &amp; edit</h2>
+      <p className="sub">Every field below is editable. Nothing is published until you submit.</p>
 
-      <TextField label="Resource name" value={d.resource_name} onChange={(v) => set('resource_name', v)} required />
-      <TextField label="Resource URL" value={d.resource_url} onChange={(v) => set('resource_url', v)} required />
-      <TextField label="Short description (the challenge addressed, not the tools)" value={d.short_desc_2000}
-        onChange={(v) => set('short_desc_2000', v)} maxLength={2000} multiline required />
-      <TextField label="Organization" value={d.organization} onChange={(v) => set('organization', v)} required />
-      <TextField label="Contact name" value={d.contact_name} onChange={(v) => set('contact_name', v)} />
-      <TextField label="Contact email" value={d.contact_email} onChange={(v) => set('contact_email', v)} />
-      <YearField label="Year of publication" value={d.publication_yr} onChange={(v) => set('publication_yr', v)} />
+      <section className="form-section">
+        <h3 className="section-title">Basics</h3>
+        <TextField label="Resource name" value={d.resource_name} onChange={(v) => set('resource_name', v)} required />
+        <TextField label="Resource URL" value={d.resource_url} onChange={(v) => set('resource_url', v)} required />
+        <TextField label="Short description (the challenge addressed, not the tools)" value={d.short_desc_2000}
+          onChange={(v) => set('short_desc_2000', v)} maxLength={2000} multiline required />
+        <TextField label="Organization" value={d.organization} onChange={(v) => set('organization', v)} required />
+        <TextField label="Contact name" value={d.contact_name} onChange={(v) => set('contact_name', v)} />
+        <TextField label="Contact email" value={d.contact_email} onChange={(v) => set('contact_email', v)} />
+        <YearField label="Year of publication" value={d.publication_yr} onChange={(v) => set('publication_yr', v)} />
+      </section>
 
-      <SelectField label="Resource type" value={d.resource_type} options={RESOURCE_TYPE}
-        onChange={(v) => set('resource_type', v as any)} required />
-      <SelectField label="Can this resource be shared publicly?" value={d.public_YN} options={YES_NO}
-        onChange={(v) => set('public_YN', v as any)} />
+      <section className="form-section">
+        <h3 className="section-title">Type &amp; audience</h3>
+        <SelectField label="Resource type" value={d.resource_type} options={RESOURCE_TYPE}
+          onChange={(v) => set('resource_type', v as any)} required />
+        <SelectField label="Can this resource be shared publicly?" value={d.public_YN} options={YES_NO}
+          onChange={(v) => set('public_YN', v as any)} />
 
-      {showsRegionCountry(d) && (
-        <TextField label={`Region / country of relevance (a country name, or "${REGION_GLOBAL}")`}
-          value={d.region_country} onChange={(v) => set('region_country', v)} />
-      )}
+        {showsRegionCountry(d) && (
+          <TextField label={`Region / country of relevance (a country name, or "${REGION_GLOBAL}")`}
+            value={d.region_country} onChange={(v) => set('region_country', v)} />
+        )}
 
-      {/* op_service extras */}
-      {d.resource_type === 'op_service' && (
-        <SelectField label="Type of operational service" value={d.service_type} options={SERVICE_TYPE}
-          onChange={(v) => set('service_type', v as any)} />
-      )}
-      {showsDataType(d) && (
-        <MultiSelectField label="Data / information categories" value={d.data_type} options={DATA_TYPE}
-          onChange={(v) => set('data_type', v)} />
-      )}
+        {/* op_service extras */}
+        {d.resource_type === 'op_service' && (
+          <SelectField label="Type of operational service" value={d.service_type} options={SERVICE_TYPE}
+            onChange={(v) => set('service_type', v as any)} />
+        )}
+        {showsDataType(d) && (
+          <MultiSelectField label="Data / information categories" value={d.data_type} options={DATA_TYPE}
+            onChange={(v) => set('data_type', v)} />
+        )}
+      </section>
 
-      {/* Mission / sector */}
-      <MultiSelectField label="Mission / sectors of work" value={d.mission_sector_broad_type} options={MISSION_SECTOR_BROAD}
-        onChange={(v) => set('mission_sector_broad_type', v)} />
-      {showsMissionSubset(d, 'humanitarian') && (
-        <MultiSelectField label="Humanitarian & disaster-management sectors" value={d.mission_sector_humanitarian}
-          options={MISSION_SECTOR_HUMANITARIAN} onChange={(v) => set('mission_sector_humanitarian', v)} />
-      )}
+      <section className="form-section">
+        <h3 className="section-title">Mission &amp; disaster management</h3>
+        <MultiSelectField label="Mission / sectors of work" value={d.mission_sector_broad_type} options={MISSION_SECTOR_BROAD}
+          onChange={(v) => set('mission_sector_broad_type', v)} />
+        {showsMissionSubset(d, 'humanitarian') && (
+          <MultiSelectField label="Humanitarian & disaster-management sectors" value={d.mission_sector_humanitarian}
+            options={MISSION_SECTOR_HUMANITARIAN} onChange={(v) => set('mission_sector_humanitarian', v)} />
+        )}
 
-      {/* DRM */}
-      <MultiSelectField label="DRM workflows" value={d.drm_broad_type} options={DRM_BROAD}
-        onChange={(v) => set('drm_broad_type', v)} />
-      {showsDrmSubset(d, 'risk_mitigation') && (
-        <MultiSelectField label="Risk mitigation" value={d.risk_type} options={RISK_TYPE} onChange={(v) => set('risk_type', v)} />
-      )}
-      {showsDrmSubset(d, 'preparedness') && (
-        <MultiSelectField label="Preparedness, AA, EW" value={d.preparedness_type} options={PREPAREDNESS_TYPE} onChange={(v) => set('preparedness_type', v)} />
-      )}
-      {showsDrmSubset(d, 'response') && (
-        <MultiSelectField label="Response" value={d.response_type} options={RESPONSE_TYPE} onChange={(v) => set('response_type', v)} />
-      )}
-      {showsDrmSubset(d, 'recovery') && (
-        <MultiSelectField label="Recovery & resilience building" value={d.recovery_type} options={RECOVERY_TYPE} onChange={(v) => set('recovery_type', v)} />
-      )}
+        {/* DRM */}
+        <MultiSelectField label="DRM workflows" value={d.drm_broad_type} options={DRM_BROAD}
+          onChange={(v) => set('drm_broad_type', v)} />
+        {showsDrmSubset(d, 'risk_mitigation') && (
+          <MultiSelectField label="Risk mitigation" value={d.risk_type} options={RISK_TYPE} onChange={(v) => set('risk_type', v)} />
+        )}
+        {showsDrmSubset(d, 'preparedness') && (
+          <MultiSelectField label="Preparedness, AA, EW" value={d.preparedness_type} options={PREPAREDNESS_TYPE} onChange={(v) => set('preparedness_type', v)} />
+        )}
+        {showsDrmSubset(d, 'response') && (
+          <MultiSelectField label="Response" value={d.response_type} options={RESPONSE_TYPE} onChange={(v) => set('response_type', v)} />
+        )}
+        {showsDrmSubset(d, 'recovery') && (
+          <MultiSelectField label="Recovery & resilience building" value={d.recovery_type} options={RECOVERY_TYPE} onChange={(v) => set('recovery_type', v)} />
+        )}
+        <MultiSelectField label="Hazard types" value={d.hzrd_type} options={HZRD_TYPE} onChange={(v) => set('hzrd_type', v)} />
+      </section>
 
-      <MultiSelectField label="Hazard types" value={d.hzrd_type} options={HZRD_TYPE} onChange={(v) => set('hzrd_type', v)} />
-      <MultiSelectField label="SDGs" value={d.sdg} options={SDG} onChange={(v) => set('sdg', v)} />
-      <MultiSelectField label="Information management phase" value={d.info_mgmnt_phase} options={INFO_MGMNT_PHASE} onChange={(v) => set('info_mgmnt_phase', v)} />
-      <MultiSelectField label="Spatial analytics workflows" value={d.sptl_analytics_broad_type} options={SPTL_ANALYTICS_BROAD} onChange={(v) => set('sptl_analytics_broad_type', v)} />
-      <MultiSelectField label="Development program cycle" value={d.dev_prgrm_cycle} options={DEV_PRGRM_CYCLE} onChange={(v) => set('dev_prgrm_cycle', v)} />
-      <MultiSelectField label="ArcGIS capabilities" value={d.capabilities} options={CAPABILITIES} onChange={(v) => set('capabilities', v)} />
+      <section className="form-section">
+        <h3 className="section-title">Frameworks &amp; capabilities</h3>
+        <MultiSelectField label="SDGs" value={d.sdg} options={SDG} onChange={(v) => set('sdg', v)} />
+        <MultiSelectField label="Information management phase" value={d.info_mgmnt_phase} options={INFO_MGMNT_PHASE} onChange={(v) => set('info_mgmnt_phase', v)} />
+        <MultiSelectField label="Spatial analytics workflows" value={d.sptl_analytics_broad_type} options={SPTL_ANALYTICS_BROAD} onChange={(v) => set('sptl_analytics_broad_type', v)} />
+        <MultiSelectField label="Development program cycle" value={d.dev_prgrm_cycle} options={DEV_PRGRM_CYCLE} onChange={(v) => set('dev_prgrm_cycle', v)} />
+        <MultiSelectField label="ArcGIS capabilities" value={d.capabilities} options={CAPABILITIES} onChange={(v) => set('capabilities', v)} />
+      </section>
 
-      <button type="button" onClick={onSubmit} disabled={submitting} style={{ marginTop: 16, padding: '10px 18px' }}>
-        {submitting ? 'Submitting…' : 'Submit to catalog'}
-      </button>
+      <div className="actions">
+        <button type="button" className="btn btn--primary btn--lg" onClick={onSubmit} disabled={submitting}>
+          {submitting ? 'Submitting…' : 'Submit to catalog →'}
+        </button>
+      </div>
     </div>
   );
 }

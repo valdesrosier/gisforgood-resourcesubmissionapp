@@ -1,5 +1,5 @@
 import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import OpenAI from 'openai';
+import OpenAI, { AzureOpenAI } from 'openai';
 import { extractionJsonSchema } from '../../shared/extractionSchema';
 import { emptyDraft, type ResourceDraft } from '../../shared/draft';
 import { keepAllowed, isAllowedSingle } from '../../shared/validate';
@@ -56,7 +56,7 @@ Return one JSON object matching the schema. Rules:
 const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {
   const url: string | undefined = req.body?.url;
   if (!url || !/^https?:\/\//i.test(url)) {
-    context.res = { status: 400, jsonBody: { error: 'A valid http(s) url is required.' } };
+    context.res = { status: 400, body: { error: 'A valid http(s) url is required.' } };
     return;
   }
 
@@ -67,14 +67,24 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
     text = htmlToText(await page.text());
   } catch (err) {
     context.log.error('extract: page fetch failed', err);
-    context.res = { status: 502, jsonBody: { error: 'Could not fetch the page.' } };
+    context.res = { status: 502, body: { error: 'Could not fetch the page.' } };
     return;
   }
 
   try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    // Use Azure OpenAI when an Azure endpoint is configured; otherwise the OpenAI platform.
+    const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const model = process.env.OPENAI_MODEL || process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-4o-mini';
+    const client = azureEndpoint
+      ? new AzureOpenAI({
+          endpoint: azureEndpoint,
+          apiKey: process.env.OPENAI_API_KEY,
+          apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-10-21',
+          deployment: process.env.AZURE_OPENAI_DEPLOYMENT || model,
+        })
+      : new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const completion = await client.chat.completions.create({
-      model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+      model,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: `URL: ${url}\n\nPAGE TEXT:\n${text}` },
@@ -88,10 +98,10 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
     draft.contact_name = draft.contact_name || process.env.CONTACT_FALLBACK_NAME || null;
     draft.contact_email = draft.contact_email || process.env.CONTACT_FALLBACK_EMAIL || null;
 
-    context.res = { status: 200, jsonBody: { draft } };
+    context.res = { status: 200, body: { draft } };
   } catch (err) {
     context.log.error('extract: OpenAI call failed', err);
-    context.res = { status: 502, jsonBody: { error: 'Extraction failed.' } };
+    context.res = { status: 502, body: { error: 'Extraction failed.' } };
   }
 };
 

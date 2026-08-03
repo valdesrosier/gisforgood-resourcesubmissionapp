@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Screenshot preview + manual upload override. A screenshot failure never blocks submission (D6);
  * the contributor can always upload their own image.
@@ -10,16 +8,23 @@ export function ThumbnailPanel(props: {
 }) {
   const { previewUrl, onUpload } = props;
   return (
-    <div style={{ marginBottom: 16 }}>
-      <h3>Thumbnail</h3>
+    <div>
+      <h2>Thumbnail</h2>
+      <p className="sub">This image represents the resource in the catalog.</p>
       {previewUrl ? (
-        <img src={previewUrl} alt="thumbnail preview" style={{ maxWidth: 360, border: '1px solid #ddd' }} />
+        <img src={previewUrl} alt="thumbnail preview" className="thumb-preview" />
       ) : (
-        <p style={{ color: '#a00' }}>No screenshot captured — upload an image below.</p>
+        <div className="alert alert--error" style={{ marginBottom: 14 }}>
+          <span aria-hidden="true">⚠</span>
+          <span>No screenshot captured — upload an image below.</span>
+        </div>
       )}
-      <div style={{ marginTop: 8 }}>
-        <label style={{ fontWeight: 600, display: 'block' }}>Upload your own image (overrides the screenshot)</label>
+      <div className="filedrop">
+        <span className="field-label" style={{ marginBottom: 0 }}>
+          Upload your own image (overrides the screenshot)
+        </span>
         <input
+          className="file-input"
           type="file"
           accept="image/*"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); }}

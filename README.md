@@ -50,6 +50,12 @@ Backend (`api/local.settings.json` — see the example), **secret, server-side o
 `OPENAI_API_KEY`, `OPENAI_MODEL`, `SCREENSHOTONE_ACCESS_KEY`, `SCREENSHOTONE_SIGNING_SECRET` (optional),
 `CONTACT_FALLBACK_NAME`/`CONTACT_FALLBACK_EMAIL` (optional; blank by default).
 
+The `/extract` function targets the **OpenAI platform** by default. To use **Azure OpenAI** instead,
+set `AZURE_OPENAI_ENDPOINT` (the resource/gateway base URL, e.g.
+`https://<resource>.openai.azure.com` — include any gateway path prefix if you route through APIM),
+`AZURE_OPENAI_DEPLOYMENT` (your deployment name), and `AZURE_OPENAI_API_VERSION` (defaults to
+`2024-10-21`). `OPENAI_API_KEY` carries the key for whichever provider is configured.
+
 ## Setup reminders
 
 - Register the deployed app URL as the **OAuth redirect URI** on the OAuth app item.

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getCurrentUser, signIn, signOut, type SignedInUser } from './auth/arcgisAuth';
 import { extractDraft, captureScreenshot } from './api/client';
 import { submitResource } from './arcgis/submit';
@@ -77,53 +77,124 @@ export default function App() {
   }
 
   return (
-    <main style={{ maxWidth: 820, margin: '0 auto', padding: 24, fontFamily: 'system-ui, sans-serif' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>GIS for Good — Submit a Resource</h1>
-        {user && <button type="button" onClick={signOut}>Sign out ({user.username})</button>}
+    <div className="app">
+      <header className="topbar">
+        <div className="brand">
+          <span className="brand-mark">GIS</span>
+          <span className="brand-title">
+            GIS for Good
+            <small>Submit a Resource</small>
+          </span>
+        </div>
+        {user && (
+          <button type="button" className="signout-btn" onClick={signOut}>
+            Sign out ({user.username})
+          </button>
+        )}
       </header>
 
-      {error && <p style={{ color: '#a00' }}>{error}</p>}
+      {error && (
+        <div className="alert alert--error" role="alert">
+          <span aria-hidden="true">⚠</span>
+          <span>{error}</span>
+        </div>
+      )}
 
-      {phase === 'loading' && <p>Loading…</p>}
+      {phase === 'loading' && (
+        <div className="panel">
+          <div className="status"><span className="spinner" aria-hidden="true" /> Loading…</div>
+        </div>
+      )}
 
       {phase === 'signedout' && (
-        <div>
-          <p>Sign in with your ArcGIS organization account to submit a resource.</p>
-          <button type="button" onClick={handleSignIn}>Sign in</button>
-        </div>
+        <>
+          <section className="hero">
+            <span className="eyebrow">Resource Catalog</span>
+            <h1>Share a resource with the GIS for Good Hub</h1>
+            <p>
+              Paste a resource link and we’ll auto-draft the catalog entry for you to review,
+              then publish it straight to the Hub.
+            </p>
+          </section>
+          <div className="panel">
+            <h2>Sign in to continue</h2>
+            <p className="sub">Use your ArcGIS organization account to submit a resource.</p>
+            <button type="button" className="btn btn--primary btn--lg" onClick={handleSignIn}>
+              Sign in with ArcGIS
+            </button>
+          </div>
+        </>
       )}
 
       {phase === 'entry' && (
-        <div>
-          <label style={{ fontWeight: 600, display: 'block' }}>Resource URL</label>
-          <input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…"
-            style={{ width: '100%' }} />
-          <button type="button" onClick={handleExtract} disabled={!/^https?:\/\//i.test(url)} style={{ marginTop: 12 }}>
-            Auto-draft from page
-          </button>
+        <>
+          <section className="hero">
+            <span className="eyebrow">Resource Catalog</span>
+            <h1>Submit a resource</h1>
+            <p>Drop in a link and we’ll draft the catalog fields from the page. You review and edit before anything is published.</p>
+          </section>
+          <div className="panel">
+            <label className="field">
+              <span className="field-label">Resource URL<span className="req">*</span></span>
+              <input
+                type="url"
+                className="input"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://…"
+              />
+            </label>
+            <div className="actions">
+              <button
+                type="button"
+                className="btn btn--primary btn--lg"
+                onClick={handleExtract}
+                disabled={!/^https?:\/\//i.test(url)}
+              >
+                Auto-draft from page →
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {phase === 'drafting' && (
+        <div className="panel">
+          <div className="status">
+            <span className="spinner" aria-hidden="true" />
+            Reading the page and drafting fields…
+          </div>
         </div>
       )}
 
-      {phase === 'drafting' && <p>Reading the page and drafting fields…</p>}
-
       {phase === 'review' && (
-        <div>
-          <ThumbnailPanel previewUrl={previewUrl} onUpload={handleUpload} />
-          <ReviewForm draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))}
-            onSubmit={handleSubmit} submitting={false} />
-        </div>
+        <>
+          <div className="panel">
+            <ThumbnailPanel previewUrl={previewUrl} onUpload={handleUpload} />
+          </div>
+          <div className="panel">
+            <ReviewForm draft={draft} onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))}
+              onSubmit={handleSubmit} submitting={false} />
+          </div>
+        </>
       )}
 
       {phase === 'done' && (
-        <div>
-          <h2>Submitted ✔</h2>
-          <p>New feature object ID: <strong>{newObjectId}</strong></p>
-          <button type="button" onClick={() => { setDraft(emptyDraft()); setUrl(''); setThumb(null); setPreviewUrl(null); setNewObjectId(null); setPhase('entry'); }}>
+        <div className="panel" style={{ textAlign: 'center' }}>
+          <div className="done-badge" aria-hidden="true">✓</div>
+          <h2>Submitted</h2>
+          <p className="sub">
+            Your resource is now in the catalog — new feature object ID <span className="oid">{newObjectId}</span>.
+          </p>
+          <button
+            type="button"
+            className="btn btn--primary btn--lg"
+            onClick={() => { setDraft(emptyDraft()); setUrl(''); setThumb(null); setPreviewUrl(null); setNewObjectId(null); setPhase('entry'); }}
+          >
             Submit another
           </button>
         </div>
       )}
-    </main>
+    </div>
   );
 }

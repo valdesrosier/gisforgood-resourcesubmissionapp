@@ -7,6 +7,10 @@
     "OPENAI_API_KEY": "sk-...replace...",
     "OPENAI_MODEL": "gpt-4o-mini",
 
+    "AZURE_OPENAI_ENDPOINT": "",
+    "AZURE_OPENAI_DEPLOYMENT": "",
+    "AZURE_OPENAI_API_VERSION": "2024-10-21",
+
     "SCREENSHOTONE_ACCESS_KEY": "...replace...",
     "SCREENSHOTONE_SIGNING_SECRET": "",
 
