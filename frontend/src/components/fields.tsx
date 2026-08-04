@@ -1,5 +1,7 @@
 /** Small controlled inputs. No <form> tags anywhere — onChange/onClick only (per spec). */
 
+import { labelFor } from '@shared/codes';
+
 export function TextField(props: {
   label: string; value: string | null; onChange: (v: string) => void;
   required?: boolean; maxLength?: number; multiline?: boolean;
@@ -42,8 +44,9 @@ export function YearField(props: { label: string; value: number | null; onChange
 export function SelectField(props: {
   label: string; value: string | null; options: readonly string[];
   onChange: (v: string | null) => void; required?: boolean;
+  labels?: Record<string, string>;
 }) {
-  const { label, value, options, onChange, required } = props;
+  const { label, value, options, onChange, required, labels } = props;
   return (
     <label className="field">
       <span className="field-label">{label}{required ? <span className="req">*</span> : null}</span>
@@ -53,7 +56,7 @@ export function SelectField(props: {
         onChange={(e) => onChange(e.target.value || null)}
       >
         <option value="">— none —</option>
-        {options.map((o) => <option key={o} value={o}>{o}</option>)}
+        {options.map((o) => <option key={o} value={o}>{labelFor(o, labels)}</option>)}
       </select>
     </label>
   );
@@ -62,8 +65,9 @@ export function SelectField(props: {
 export function MultiSelectField(props: {
   label: string; value: string[] | null; options: readonly string[];
   onChange: (v: string[]) => void;
+  labels?: Record<string, string>;
 }) {
-  const { label, value, options, onChange } = props;
+  const { label, value, options, onChange, labels } = props;
   const selected = new Set(value ?? []);
   const toggle = (code: string) => {
     const next = new Set(selected);
@@ -80,7 +84,7 @@ export function MultiSelectField(props: {
             <label key={o} className={on ? 'chip chip--on' : 'chip'}>
               <input type="checkbox" checked={on} onChange={() => toggle(o)} />
               <span className="dot" aria-hidden="true" />
-              {o}
+              {labelFor(o, labels)}
             </label>
           );
         })}

@@ -4,6 +4,10 @@ import {
   MISSION_SECTOR_HUMANITARIAN, DRM_BROAD, RISK_TYPE, PREPAREDNESS_TYPE, RESPONSE_TYPE,
   RECOVERY_TYPE, HZRD_TYPE, SDG, INFO_MGMNT_PHASE, SPTL_ANALYTICS_BROAD, DEV_PRGRM_CYCLE,
   CAPABILITIES, REGION_GLOBAL,
+  RESOURCE_TYPE_LABELS, YES_NO_LABELS, MISSION_SECTOR_BROAD_LABELS,
+  MISSION_SECTOR_HUMANITARIAN_LABELS, DRM_BROAD_LABELS, RISK_TYPE_LABELS, PREPAREDNESS_TYPE_LABELS,
+  RESPONSE_TYPE_LABELS, RECOVERY_TYPE_LABELS, HZRD_TYPE_LABELS, SDG_LABELS, INFO_MGMNT_PHASE_LABELS,
+  SPTL_ANALYTICS_BROAD_LABELS, DEV_PRGRM_CYCLE_LABELS, CAPABILITIES_LABELS,
 } from '@shared/codes';
 import { showsRegionCountry, showsDataType, showsMissionSubset, showsDrmSubset } from '@shared/conditionals';
 import { TextField, YearField, SelectField, MultiSelectField } from './fields';
@@ -45,9 +49,9 @@ export function ReviewForm(props: {
       <section className="form-section">
         <h3 className="section-title">Type &amp; audience</h3>
         <SelectField label="Resource type" value={d.resource_type} options={RESOURCE_TYPE}
-          onChange={(v) => set('resource_type', v as any)} required />
+          onChange={(v) => set('resource_type', v as any)} required labels={RESOURCE_TYPE_LABELS} />
         <SelectField label="Can this resource be shared publicly?" value={d.public_YN} options={YES_NO}
-          onChange={(v) => set('public_YN', v as any)} />
+          onChange={(v) => set('public_YN', v as any)} labels={YES_NO_LABELS} />
 
         {showsRegionCountry(d) && (
           <TextField label={`Region / country of relevance (a country name, or "${REGION_GLOBAL}")`}
@@ -68,37 +72,37 @@ export function ReviewForm(props: {
       <section className="form-section">
         <h3 className="section-title">Mission &amp; disaster management</h3>
         <MultiSelectField label="Mission / sectors of work" value={d.mission_sector_broad_type} options={MISSION_SECTOR_BROAD}
-          onChange={(v) => set('mission_sector_broad_type', v)} />
+          onChange={(v) => set('mission_sector_broad_type', v)} labels={MISSION_SECTOR_BROAD_LABELS} />
         {showsMissionSubset(d, 'humanitarian') && (
           <MultiSelectField label="Humanitarian & disaster-management sectors" value={d.mission_sector_humanitarian}
-            options={MISSION_SECTOR_HUMANITARIAN} onChange={(v) => set('mission_sector_humanitarian', v)} />
+            options={MISSION_SECTOR_HUMANITARIAN} onChange={(v) => set('mission_sector_humanitarian', v)} labels={MISSION_SECTOR_HUMANITARIAN_LABELS} />
         )}
 
         {/* DRM */}
         <MultiSelectField label="DRM workflows" value={d.drm_broad_type} options={DRM_BROAD}
-          onChange={(v) => set('drm_broad_type', v)} />
+          onChange={(v) => set('drm_broad_type', v)} labels={DRM_BROAD_LABELS} />
         {showsDrmSubset(d, 'risk_mitigation') && (
-          <MultiSelectField label="Risk mitigation" value={d.risk_type} options={RISK_TYPE} onChange={(v) => set('risk_type', v)} />
+          <MultiSelectField label="Risk mitigation" value={d.risk_type} options={RISK_TYPE} onChange={(v) => set('risk_type', v)} labels={RISK_TYPE_LABELS} />
         )}
         {showsDrmSubset(d, 'preparedness') && (
-          <MultiSelectField label="Preparedness, AA, EW" value={d.preparedness_type} options={PREPAREDNESS_TYPE} onChange={(v) => set('preparedness_type', v)} />
+          <MultiSelectField label="Preparedness, AA, EW" value={d.preparedness_type} options={PREPAREDNESS_TYPE} onChange={(v) => set('preparedness_type', v)} labels={PREPAREDNESS_TYPE_LABELS} />
         )}
         {showsDrmSubset(d, 'response') && (
-          <MultiSelectField label="Response" value={d.response_type} options={RESPONSE_TYPE} onChange={(v) => set('response_type', v)} />
+          <MultiSelectField label="Response" value={d.response_type} options={RESPONSE_TYPE} onChange={(v) => set('response_type', v)} labels={RESPONSE_TYPE_LABELS} />
         )}
         {showsDrmSubset(d, 'recovery') && (
-          <MultiSelectField label="Recovery & resilience building" value={d.recovery_type} options={RECOVERY_TYPE} onChange={(v) => set('recovery_type', v)} />
+          <MultiSelectField label="Recovery & resilience building" value={d.recovery_type} options={RECOVERY_TYPE} onChange={(v) => set('recovery_type', v)} labels={RECOVERY_TYPE_LABELS} />
         )}
-        <MultiSelectField label="Hazard types" value={d.hzrd_type} options={HZRD_TYPE} onChange={(v) => set('hzrd_type', v)} />
+        <MultiSelectField label="Hazard types" value={d.hzrd_type} options={HZRD_TYPE} onChange={(v) => set('hzrd_type', v)} labels={HZRD_TYPE_LABELS} />
       </section>
 
       <section className="form-section">
         <h3 className="section-title">Frameworks &amp; capabilities</h3>
-        <MultiSelectField label="SDGs" value={d.sdg} options={SDG} onChange={(v) => set('sdg', v)} />
-        <MultiSelectField label="Information management phase" value={d.info_mgmnt_phase} options={INFO_MGMNT_PHASE} onChange={(v) => set('info_mgmnt_phase', v)} />
-        <MultiSelectField label="Spatial analytics workflows" value={d.sptl_analytics_broad_type} options={SPTL_ANALYTICS_BROAD} onChange={(v) => set('sptl_analytics_broad_type', v)} />
-        <MultiSelectField label="Development program cycle" value={d.dev_prgrm_cycle} options={DEV_PRGRM_CYCLE} onChange={(v) => set('dev_prgrm_cycle', v)} />
-        <MultiSelectField label="ArcGIS capabilities" value={d.capabilities} options={CAPABILITIES} onChange={(v) => set('capabilities', v)} />
+        <MultiSelectField label="SDGs" value={d.sdg} options={SDG} onChange={(v) => set('sdg', v)} labels={SDG_LABELS} />
+        <MultiSelectField label="Information management phase" value={d.info_mgmnt_phase} options={INFO_MGMNT_PHASE} onChange={(v) => set('info_mgmnt_phase', v)} labels={INFO_MGMNT_PHASE_LABELS} />
+        <MultiSelectField label="Spatial analytics workflows" value={d.sptl_analytics_broad_type} options={SPTL_ANALYTICS_BROAD} onChange={(v) => set('sptl_analytics_broad_type', v)} labels={SPTL_ANALYTICS_BROAD_LABELS} />
+        <MultiSelectField label="Development program cycle" value={d.dev_prgrm_cycle} options={DEV_PRGRM_CYCLE} onChange={(v) => set('dev_prgrm_cycle', v)} labels={DEV_PRGRM_CYCLE_LABELS} />
+        <MultiSelectField label="ArcGIS capabilities" value={d.capabilities} options={CAPABILITIES} onChange={(v) => set('capabilities', v)} labels={CAPABILITIES_LABELS} />
       </section>
 
       <div className="actions">
