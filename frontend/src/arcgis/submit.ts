@@ -3,8 +3,9 @@ import Graphic from '@arcgis/core/Graphic';
 import Point from '@arcgis/core/geometry/Point';
 import { buildFeature } from '@shared/buildFeature';
 import type { ResourceDraft } from '@shared/draft';
+import { configuration } from '../config';
 
-const LAYER_URL = import.meta.env.VITE_LAYER_URL as string;
+const LAYER_URL = configuration.layerUrl;
 
 export interface SubmitResult {
   objectId: number;
