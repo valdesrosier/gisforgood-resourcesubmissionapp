@@ -44,6 +44,17 @@ function sendJSON(response: ServerResponse, status: number, body: unknown): void
   response.end(JSON.stringify(body));
 }
 
+function sendBrowserConfiguration(response: ServerResponse): void {
+  response.statusCode = 200;
+  response.setHeader('Content-Type', 'text/javascript; charset=utf-8');
+  response.setHeader('Cache-Control', 'no-store');
+  response.end(`window.__GCAPPS_CONFIG__=${JSON.stringify({
+    arcgisClientId: process.env.ARCGIS_CLIENT_ID || '',
+    portalUrl: process.env.ARCGIS_PORTAL_URL || '',
+    layerUrl: process.env.ARCGIS_LAYER_URL || '',
+  })};`);
+}
+
 async function readJSON(request: IncomingMessage): Promise<unknown> {
   const chunks: Buffer[] = [];
   let size = 0;
@@ -142,6 +153,8 @@ const server = createServer(async (request, response) => {
     if (pathname === '/_health') {
       response.statusCode = 204;
       response.end();
+    } else if (pathname === '/_config.js') {
+      sendBrowserConfiguration(response);
     } else if (pathname === '/api/extract') {
       await invoke(extract, request, response);
     } else if (pathname === '/api/screenshot') {

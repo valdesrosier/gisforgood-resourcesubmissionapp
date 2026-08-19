@@ -1,13 +1,14 @@
 import OAuthInfo from '@arcgis/core/identity/OAuthInfo';
 import esriId from '@arcgis/core/identity/IdentityManager';
+import { configuration } from '../config';
 
 /**
  * ArcGIS OAuth 2.0 sign-in gate (ADR-0003). Registers the OAuth app, then either resumes an
  * existing session or redirects the user through the org's configured SSO. The signed-in user's
  * token is what applyEdits/addAttachment use client-side.
  */
-const PORTAL_URL = import.meta.env.VITE_PORTAL_URL as string;
-const CLIENT_ID = import.meta.env.VITE_ARCGIS_CLIENT_ID as string;
+const PORTAL_URL = configuration.portalUrl;
+const CLIENT_ID = configuration.arcgisClientId;
 const TOKEN_SERVER = `${PORTAL_URL}/sharing/rest`;
 
 let registered = false;

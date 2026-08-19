@@ -41,8 +41,9 @@ HOST=127.0.0.1 PORT=3000 node api/dist/api/server.js
 
 ## Configuration
 
-Front end (`frontend/.env` — see `.env.example`), all **non-secret** (ship in the browser):
-`VITE_ARCGIS_CLIENT_ID`, `VITE_PORTAL_URL`, `VITE_LAYER_URL` (the `_form` view `/0`).
+Browser configuration is declared in `gcapps.json` and managed in the GC Apps Dashboard:
+`ARCGIS_CLIENT_ID`, `ARCGIS_PORTAL_URL`, and `ARCGIS_LAYER_URL` (the `_form` view `/0`). These
+values are non-secret and are served to the browser by `/_config.js` with `Cache-Control: no-store`.
 
 Backend values declared by `gcapps.json`, entered in the GC Apps Dashboard:
 `OPENAI_API_KEY`, `OPENAI_MODEL`, `SCREENSHOTONE_ACCESS_KEY`, `SCREENSHOTONE_SIGNING_SECRET` (optional),
@@ -55,8 +56,7 @@ set `AZURE_OPENAI_ENDPOINT` (the resource/gateway base URL, e.g.
 `2024-10-21`). `OPENAI_API_KEY` carries the key for whichever provider is configured.
 
 The GitHub workflow builds the complete Artifact and deploys it with `apfister/gc-apps-deploy@v1`.
-Configure repository variables `VITE_ARCGIS_CLIENT_ID`, `VITE_PORTAL_URL`, and `VITE_LAYER_URL`.
-After the first Deployment, enter backend settings and write-only secrets in the GC Apps Dashboard.
+After the first Deployment, enter browser/backend settings and write-only secrets in the GC Apps Dashboard.
 
 ## Setup reminders
 
