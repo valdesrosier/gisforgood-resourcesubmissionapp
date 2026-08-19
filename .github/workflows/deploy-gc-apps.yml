@@ -29,6 +29,7 @@ jobs:
           cp -R api/dist/api/. artifact/api/
           cp -R api/dist/shared/. artifact/shared/
           cp -R api/node_modules artifact/
+          rm -rf artifact/node_modules/.bin
           cp -R frontend/dist/. artifact/public/
       - uses: apfister/gc-apps-deploy@v1
         with:
