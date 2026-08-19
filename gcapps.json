@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "type": "service",
+  "runtime": "nodejs20",
+  "entrypoint": "api/server.js",
+  "health_path": "/_health",
+  "secrets": [
+    {"name": "OPENAI_API_KEY", "description": "OpenAI or Azure OpenAI API key", "required": true},
+    {"name": "SCREENSHOTONE_ACCESS_KEY", "description": "ScreenshotOne access key"},
+    {"name": "SCREENSHOTONE_SIGNING_SECRET", "description": "ScreenshotOne signing secret"}
+  ],
+  "settings": [
+    {"name": "OPENAI_MODEL", "description": "OpenAI model", "default": "gpt-4o-mini"},
+    {"name": "AZURE_OPENAI_ENDPOINT", "description": "Azure OpenAI endpoint"},
+    {"name": "AZURE_OPENAI_DEPLOYMENT", "description": "Azure OpenAI deployment"},
+    {"name": "AZURE_OPENAI_API_VERSION", "description": "Azure OpenAI API version", "default": "2024-10-21"},
+    {"name": "CONTACT_FALLBACK_NAME", "description": "Fallback contact name"},
+    {"name": "CONTACT_FALLBACK_EMAIL", "description": "Fallback contact email"}
+  ]
+}

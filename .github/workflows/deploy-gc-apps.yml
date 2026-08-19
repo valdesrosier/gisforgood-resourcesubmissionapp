@@ -1,0 +1,43 @@
+name: Deploy to GC Apps
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm ci --prefix api && npm ci --prefix frontend
+      - name: Build frontend
+        env:
+          VITE_ARCGIS_CLIENT_ID: ${{ vars.VITE_ARCGIS_CLIENT_ID }}
+          VITE_PORTAL_URL: ${{ vars.VITE_PORTAL_URL }}
+          VITE_LAYER_URL: ${{ vars.VITE_LAYER_URL }}
+        run: |
+          test -n "$VITE_ARCGIS_CLIENT_ID"
+          test -n "$VITE_PORTAL_URL"
+          test -n "$VITE_LAYER_URL"
+          npm run build --prefix frontend
+      - name: Build service Artifact
+        run: |
+          npm run build --prefix api
+          npm prune --omit=dev --prefix api
+          mkdir -p artifact/api artifact/shared artifact/public
+          cp gcapps.json artifact/
+          cp -R api/dist/api/. artifact/api/
+          cp -R api/dist/shared/. artifact/shared/
+          cp -R api/node_modules artifact/
+          cp -R frontend/dist/. artifact/public/
+      - uses: apfister/gc-apps-deploy@v1
+        with:
+          path: artifact
