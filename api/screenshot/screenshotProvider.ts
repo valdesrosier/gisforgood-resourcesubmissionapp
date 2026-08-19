@@ -14,6 +14,7 @@ export interface ScreenshotProvider {
 }
 
 const ENDPOINT = 'https://api.screenshotone.com/take';
+const RESPONSE_BYTE_LIMIT = 10 * 1024 * 1024;
 
 /**
  * Parameter names verified against https://screenshotone.com/docs/options (2026-08).
@@ -48,13 +49,26 @@ export class ScreenshotOneProvider implements ScreenshotProvider {
       query += `&signature=${signature}`;
     }
 
-    const res = await fetch(`${ENDPOINT}?${query}`);
+    const res = await fetch(`${ENDPOINT}?${query}`, { signal: AbortSignal.timeout(65_000) });
     if (!res.ok) {
       const detail = await res.text().catch(() => '');
       throw new Error(`ScreenshotOne ${res.status}: ${detail.slice(0, 300)}`);
     }
+    const declaredSize = Number.parseInt(res.headers.get('content-length') || '', 10);
+    if (Number.isFinite(declaredSize) && declaredSize > RESPONSE_BYTE_LIMIT) {
+      throw new Error('ScreenshotOne response is too large');
+    }
+    if (!res.body) throw new Error('ScreenshotOne returned an empty response');
+    const chunks: Buffer[] = [];
+    let size = 0;
+    for await (const chunk of res.body) {
+      const bytes = Buffer.from(chunk);
+      size += bytes.length;
+      if (size > RESPONSE_BYTE_LIMIT) throw new Error('ScreenshotOne response is too large');
+      chunks.push(bytes);
+    }
     const contentType = res.headers.get('content-type') ?? 'image/png';
-    const bytes = Buffer.from(await res.arrayBuffer());
+    const bytes = Buffer.concat(chunks);
     return { bytes, contentType };
   }
 }

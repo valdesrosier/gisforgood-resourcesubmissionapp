@@ -9,6 +9,7 @@ import {
   RECOVERY_TYPE, HZRD_TYPE, SDG, INFO_MGMNT_PHASE, SPTL_ANALYTICS_BROAD, DEV_PRGRM_CYCLE,
   CAPABILITIES,
 } from '../../shared/codes';
+import { fetchPublicPage } from './publicFetch';
 
 /** Strip HTML to readable-ish text and cap length for the model. */
 function htmlToText(html: string): string {
@@ -62,7 +63,7 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
 
   let text: string;
   try {
-    const page = await fetch(url, { headers: { 'User-Agent': 'GIS4Good-ResourceBot/0.1' } });
+    const page = await fetchPublicPage(url);
     if (!page.ok) throw new Error(`fetch ${page.status}`);
     text = htmlToText(await page.text());
   } catch (err) {
@@ -81,8 +82,10 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
           apiKey: process.env.OPENAI_API_KEY,
           apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-10-21',
           deployment: process.env.AZURE_OPENAI_DEPLOYMENT || model,
+          timeout: 60_000,
+          maxRetries: 0,
         })
-      : new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      : new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: 60_000, maxRetries: 0 });
     const completion = await client.chat.completions.create({
       model,
       messages: [

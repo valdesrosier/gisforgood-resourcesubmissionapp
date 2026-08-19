@@ -6,8 +6,8 @@ existing Survey123 form. This replaces the data-entry UX only — the schema is 
 
 - **Front end:** React 18 + Vite + TypeScript. ArcGIS OAuth 2.0 sign-in gate (`@arcgis/core`,
   `OAuthInfo` + `IdentityManager`). No map. Writes are **client-side** with the signed-in user's token.
-- **Backend:** Azure Functions (`/api/extract`, `/api/screenshot`) — no ArcGIS credentials.
-- **Hosting:** Azure Static Web Apps (static front end + managed Functions, same-origin `/api/*`).
+- **Backend:** Node 20 service (`/api/extract`, `/api/screenshot`) — no ArcGIS credentials.
+- **Hosting:** GC Apps service App, with same-origin SPA and `/api/*` routes.
 
 ## Layer facts (verified against the live service)
 
@@ -26,7 +26,7 @@ See `CONTEXT.md` (glossary) and `docs/adr/` (decisions).
 ```
 shared/     canonical domain model (codes, encoders, gates, conditionals, countries, validation)
 frontend/   React SPA (auth gate + review form + client-side submit)
-api/        Azure Functions: extract (OpenAI) + screenshot (ScreenshotOne)
+api/        HTTP server and handlers: extract (OpenAI) + screenshot (ScreenshotOne)
 docs/adr/   architecture decision records
 ```
 
@@ -35,10 +35,8 @@ docs/adr/   architecture decision records
 ```bash
 # frontend
 cd frontend && npm install && npm run dev
-# api (in another terminal), requires Azure Functions Core Tools v4
-cd api && npm install && npm start
-# or run both together with the SWA CLI:
-npx @azure/static-web-apps-cli start frontend/dist --api-location api
+# production-shaped service (after building frontend and api)
+HOST=127.0.0.1 PORT=3000 node api/dist/api/server.js
 ```
 
 ## Configuration
@@ -46,7 +44,7 @@ npx @azure/static-web-apps-cli start frontend/dist --api-location api
 Front end (`frontend/.env` — see `.env.example`), all **non-secret** (ship in the browser):
 `VITE_ARCGIS_CLIENT_ID`, `VITE_PORTAL_URL`, `VITE_LAYER_URL` (the `_form` view `/0`).
 
-Backend (`api/local.settings.json` — see the example), **secret, server-side only**:
+Backend values declared by `gcapps.json`, entered in the GC Apps Dashboard:
 `OPENAI_API_KEY`, `OPENAI_MODEL`, `SCREENSHOTONE_ACCESS_KEY`, `SCREENSHOTONE_SIGNING_SECRET` (optional),
 `CONTACT_FALLBACK_NAME`/`CONTACT_FALLBACK_EMAIL` (optional; blank by default).
 
@@ -55,6 +53,10 @@ set `AZURE_OPENAI_ENDPOINT` (the resource/gateway base URL, e.g.
 `https://<resource>.openai.azure.com` — include any gateway path prefix if you route through APIM),
 `AZURE_OPENAI_DEPLOYMENT` (your deployment name), and `AZURE_OPENAI_API_VERSION` (defaults to
 `2024-10-21`). `OPENAI_API_KEY` carries the key for whichever provider is configured.
+
+The GitHub workflow builds the complete Artifact and deploys it with `apfister/gc-apps-deploy@v1`.
+Configure repository variables `VITE_ARCGIS_CLIENT_ID`, `VITE_PORTAL_URL`, and `VITE_LAYER_URL`.
+After the first Deployment, enter backend settings and write-only secrets in the GC Apps Dashboard.
 
 ## Setup reminders
 
