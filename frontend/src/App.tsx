@@ -26,10 +26,19 @@ export default function App() {
   const [newObjectId, setNewObjectId] = useState<number | null>(null);
 
   useEffect(() => {
-    getCurrentUser().then((u) => {
-      setUser(u);
-      setPhase(u ? 'entry' : 'signedout');
-    });
+    getCurrentUser()
+      .then(async (currentUser) => {
+        if (currentUser) return currentUser;
+        return signIn();
+      })
+      .then((currentUser) => {
+        setUser(currentUser);
+        setPhase('entry');
+      })
+      .catch((signInError: unknown) => {
+        setError(signInError instanceof Error ? signInError.message : 'ArcGIS sign-in failed.');
+        setPhase('signedout');
+      });
   }, []);
 
   async function handleSignIn() {

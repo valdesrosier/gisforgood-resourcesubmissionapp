@@ -7,7 +7,7 @@ import { configuration } from '../config';
  * existing session or redirects the user through the org's configured SSO. The signed-in user's
  * token is what applyEdits/addAttachment use client-side.
  */
-const PORTAL_URL = configuration.portalUrl;
+const PORTAL_URL = configuration.portalUrl.replace(/\/+$/, '');
 const CLIENT_ID = configuration.arcgisClientId;
 const TOKEN_SERVER = `${PORTAL_URL}/sharing/rest`;
 
