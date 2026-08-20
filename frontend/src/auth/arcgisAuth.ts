@@ -9,7 +9,7 @@ import { configuration } from '../config';
  */
 const PORTAL_URL = configuration.portalUrl.replace(/\/+$/, '');
 const CLIENT_ID = configuration.arcgisClientId;
-const TOKEN_SERVER = `${PORTAL_URL}/sharing/rest`;
+const TOKEN_SERVER = `${PORTAL_URL}/sharing`;
 
 let registered = false;
 
