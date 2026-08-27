@@ -73,19 +73,29 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
   }
 
   try {
-    // Use Azure OpenAI when an Azure endpoint is configured; otherwise the OpenAI platform.
+    // Native Azure resources use deployment URLs; compatible gateways use their base URL directly.
     const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const apiKey = process.env.OPENAI_API_KEY;
     const model = process.env.OPENAI_MODEL || process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-4o-mini';
-    const client = azureEndpoint
+    const isNativeAzureEndpoint = azureEndpoint
+      ? new URL(azureEndpoint).hostname.endsWith('.openai.azure.com')
+      : false;
+    const client = azureEndpoint && isNativeAzureEndpoint
       ? new AzureOpenAI({
           endpoint: azureEndpoint,
-          apiKey: process.env.OPENAI_API_KEY,
+          apiKey,
           apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-10-21',
           deployment: process.env.AZURE_OPENAI_DEPLOYMENT || model,
           timeout: 60_000,
           maxRetries: 0,
         })
-      : new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: 60_000, maxRetries: 0 });
+      : new OpenAI({
+          apiKey,
+          baseURL: azureEndpoint?.replace(/\/+$/, ''),
+          defaultHeaders: azureEndpoint ? { 'api-key': apiKey || '' } : undefined,
+          timeout: 60_000,
+          maxRetries: 0,
+        });
     const completion = await client.chat.completions.create({
       model,
       messages: [

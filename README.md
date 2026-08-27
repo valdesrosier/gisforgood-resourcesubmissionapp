@@ -49,11 +49,12 @@ Backend values declared by `gcapps.json`, entered in the GC Apps Dashboard:
 `OPENAI_API_KEY`, `OPENAI_MODEL`, `SCREENSHOTONE_ACCESS_KEY`, `SCREENSHOTONE_SIGNING_SECRET` (optional),
 `CONTACT_FALLBACK_NAME`/`CONTACT_FALLBACK_EMAIL` (optional; blank by default).
 
-The `/extract` function targets the **OpenAI platform** by default. To use **Azure OpenAI** instead,
-set `AZURE_OPENAI_ENDPOINT` (the resource/gateway base URL, e.g.
-`https://<resource>.openai.azure.com` — include any gateway path prefix if you route through APIM),
-`AZURE_OPENAI_DEPLOYMENT` (your deployment name), and `AZURE_OPENAI_API_VERSION` (defaults to
-`2024-10-21`). `OPENAI_API_KEY` carries the key for whichever provider is configured.
+The `/extract` function targets the **OpenAI platform** by default. For a native **Azure OpenAI**
+resource, set `AZURE_OPENAI_ENDPOINT` (for example, `https://<resource>.openai.azure.com`),
+`AZURE_OPENAI_DEPLOYMENT`, and `AZURE_OPENAI_API_VERSION` (defaults to `2024-10-21`). For an
+OpenAI-compatible gateway, set `AZURE_OPENAI_ENDPOINT` to its API base URL (for example,
+`https://<gateway>/openai/v1`); requests use the `api-key` header and `OPENAI_MODEL`. In either mode,
+`OPENAI_API_KEY` carries the provider key.
 
 The GitHub workflow builds the complete Artifact and deploys it with `apfister/gc-apps-deploy@v1`.
 After the first Deployment, enter browser/backend settings and write-only secrets in the GC Apps Dashboard.
