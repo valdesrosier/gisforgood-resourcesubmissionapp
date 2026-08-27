@@ -4,7 +4,8 @@ import { request as httpsRequest } from "node:https";
 import { BlockList, isIP } from "node:net";
 
 const pageByteLimit = 2 * 1024 * 1024;
-const blocked = new BlockList();
+const blockedIPv4 = new BlockList();
+const blockedIPv6 = new BlockList();
 
 for (const [address, prefix] of [
   ["0.0.0.0", 8],
@@ -21,7 +22,7 @@ for (const [address, prefix] of [
   ["203.0.113.0", 24],
   ["224.0.0.0", 4],
 ] as Array<[string, number]>)
-  blocked.addSubnet(address, prefix, "ipv4");
+  blockedIPv4.addSubnet(address, prefix, "ipv4");
 for (const [address, prefix] of [
   ["::", 128],
   ["::1", 128],
@@ -32,7 +33,7 @@ for (const [address, prefix] of [
   ["fe80::", 10],
   ["ff00::", 8],
 ] as Array<[string, number]>)
-  blocked.addSubnet(address, prefix, "ipv6");
+  blockedIPv6.addSubnet(address, prefix, "ipv6");
 
 interface PublicResponse {
   ok: boolean;
@@ -57,7 +58,8 @@ async function publicAddress(
     const addressFamily = isIP(address);
     if (addressFamily !== 4 && addressFamily !== 6)
       throw new Error("URL resolved to an invalid address");
-    if (blocked.check(address, addressFamily === 4 ? "ipv4" : "ipv6")) {
+    const blockList = addressFamily === 4 ? blockedIPv4 : blockedIPv6;
+    if (blockList.check(address, addressFamily === 4 ? "ipv4" : "ipv6")) {
       throw new Error("URL resolves to a non-public address");
     }
   }
@@ -79,8 +81,13 @@ function requestPinned(
           "User-Agent": "GIS4Good-ResourceBot/0.1",
           "Accept-Encoding": "identity",
         },
-        lookup: (_hostname, _options, callback) =>
-          callback(null, address, family),
+        lookup: (_hostname, options, callback) => {
+          if (typeof options === "object" && options.all) {
+            callback(null, [{ address, family }]);
+            return;
+          }
+          callback(null, address, family);
+        },
         servername: url.hostname.replace(/^\[|\]$/g, ""),
         timeout: 15_000,
       },
