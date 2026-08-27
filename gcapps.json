@@ -14,7 +14,7 @@
     {"name": "ARCGIS_PORTAL_URL", "description": "ArcGIS organization portal URL", "required": true, "default": "https://esrifederal.maps.arcgis.com"},
     {"name": "ARCGIS_LAYER_URL", "description": "Survey123 submission Feature Layer URL", "required": true, "default": "https://services.arcgis.com/LG9Yn2oFqZi5PnO5/arcgis/rest/services/service_d9e8f948b8464845a273e610041bcd4e_form/FeatureServer/0"},
     {"name": "OPENAI_MODEL", "description": "OpenAI model", "default": "gpt-4o-mini"},
-    {"name": "AZURE_OPENAI_ENDPOINT", "description": "Native Azure OpenAI endpoint or OpenAI-compatible gateway base URL"},
+    {"name": "AZURE_OPENAI_ENDPOINT", "description": "Native Azure endpoint, or compatible gateway base/full chat-completions URL"},
     {"name": "AZURE_OPENAI_DEPLOYMENT", "description": "Azure OpenAI deployment"},
     {"name": "AZURE_OPENAI_API_VERSION", "description": "Azure OpenAI API version", "default": "2024-10-21"},
     {"name": "CONTACT_FALLBACK_NAME", "description": "Fallback contact name"},

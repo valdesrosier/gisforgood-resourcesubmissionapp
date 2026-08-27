@@ -91,7 +91,9 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
         })
       : new OpenAI({
           apiKey,
-          baseURL: azureEndpoint?.replace(/\/+$/, ''),
+          baseURL: azureEndpoint
+            ?.replace(/\/+$/, '')
+            .replace(/\/chat\/completions$/i, ''),
           defaultHeaders: azureEndpoint ? { 'api-key': apiKey || '' } : undefined,
           timeout: 60_000,
           maxRetries: 0,

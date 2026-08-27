@@ -52,9 +52,9 @@ Backend values declared by `gcapps.json`, entered in the GC Apps Dashboard:
 The `/extract` function targets the **OpenAI platform** by default. For a native **Azure OpenAI**
 resource, set `AZURE_OPENAI_ENDPOINT` (for example, `https://<resource>.openai.azure.com`),
 `AZURE_OPENAI_DEPLOYMENT`, and `AZURE_OPENAI_API_VERSION` (defaults to `2024-10-21`). For an
-OpenAI-compatible gateway, set `AZURE_OPENAI_ENDPOINT` to its API base URL (for example,
-`https://<gateway>/openai/v1`); requests use the `api-key` header and `OPENAI_MODEL`. In either mode,
-`OPENAI_API_KEY` carries the provider key.
+OpenAI-compatible gateway, set `AZURE_OPENAI_ENDPOINT` to its API base URL or full chat-completions URL
+(for example, `https://<gateway>/openai/v1` or `https://<gateway>/openai/v1/chat/completions`); requests
+use the `api-key` header and `OPENAI_MODEL`. In either mode, `OPENAI_API_KEY` carries the provider key.
 
 The GitHub workflow builds the complete Artifact and deploys it with `apfister/gc-apps-deploy@v1`.
 After the first Deployment, enter browser/backend settings and write-only secrets in the GC Apps Dashboard.
